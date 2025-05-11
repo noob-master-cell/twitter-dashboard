@@ -1,0 +1,851 @@
+/* Modern Twitter Dashboard UI - Cleaned CSS with only used styles */
+
+/* CSS Custom Properties (Variables) for consistent theming */
+:root {
+  /* Primary blue color scheme matching Twitter's brand */
+  --primary: #1da1f2;
+  --primary-light: #71c9f8;
+  --primary-dark: #0c7abf;
+
+  /* Neutral colors for text and backgrounds */
+  --secondary: #14171a;
+  --background: #f7f9fa;
+  --surface: #ffffff;
+
+  /* Status colors */
+  --error: #e0245e;
+  --success: #17bf63;
+
+  /* Text color hierarchy */
+  --text-primary: #14171a;
+  --text-secondary: #657786;
+  --text-on-primary: #ffffff;
+
+  /* Border and shadow styles */
+  --border-color: #e1e8ed;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+
+  /* Border radius values for different elements */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 16px;
+  --radius-full: 999px;
+
+  /* Transition duration for smooth animations */
+  --transition: 0.2s ease;
+}
+
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+  background-color: var(--background);
+  color: var(--text-primary);
+  line-height: 1.5;
+  margin: 0;
+  padding: 0;
+}
+
+/* Main container for the entire application */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+/* Card component - reusable container for content blocks */
+.card {
+  background-color: var(--surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 20px;
+  margin-bottom: 20px;
+  transition: box-shadow var(--transition);
+}
+
+/* Hover effect for cards */
+.card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+/* Header section styling */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--surface);
+  padding: 16px;
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+}
+
+.header-icon {
+  color: var(--primary);
+  font-size: 24px;
+  margin-right: 12px;
+}
+
+.header h1 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--primary);
+  margin: 0;
+}
+
+/* User info in header when logged in */
+.header-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header-user img.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+}
+
+.header-user span {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.header-user a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.header-user a:hover {
+  text-decoration: underline;
+}
+
+/* Navigation buttons container */
+.nav-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.nav-btn {
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Authentication forms styling */
+.auth-form {
+  max-width: 400px;
+  margin: 32px auto;
+  transition: all var(--transition);
+}
+
+.auth-form h3 {
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.auth-form form div {
+  margin-bottom: 16px;
+}
+
+/* Form labels */
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* Input fields styling */
+input[type="text"],
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  transition: all var(--transition);
+}
+
+/* Focus state for input fields */
+input[type="text"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(29, 161, 242, 0.2);
+}
+
+/* Button styling */
+button {
+  background-color: var(--primary);
+  color: var(--text-on-primary);
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Button icon spacing */
+button i {
+  margin-right: 6px;
+}
+
+/* Button hover state */
+button:hover {
+  background-color: var(--primary-dark);
+}
+
+/* Button click animation */
+button:active {
+  transform: scale(0.98);
+}
+
+/* Secondary button style (outline) */
+button.secondary {
+  background-color: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+button.secondary:hover {
+  background-color: rgba(29, 161, 242, 0.1);
+}
+
+/* Logout button specific styling */
+#logoutBtn {
+  background-color: transparent;
+  color: var(--error);
+  border: 1px solid var(--error);
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: var(--radius-full);
+}
+
+#logoutBtn:hover {
+  background-color: rgba(224, 36, 94, 0.1);
+}
+
+/* Search field container */
+.search-field {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.search-field input {
+  flex: 1;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  font-size: 14px;
+  transition: all var(--transition);
+}
+
+.search-field input:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(29, 161, 242, 0.2);
+}
+
+/* Tab navigation styling */
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 12px 24px;
+  cursor: pointer;
+  position: relative;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: all var(--transition);
+}
+
+.tab:hover {
+  color: var(--primary);
+}
+
+.tab.active {
+  color: var(--primary);
+}
+
+/* Active tab indicator */
+.tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--primary);
+  border-radius: 2px 2px 0 0;
+}
+
+/* Tab content panels */
+.tab-content {
+  display: none;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Profile section styling */
+.profile-header {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.profile-header img {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--radius-full);
+  margin-right: 24px;
+  border: 3px solid white;
+  box-shadow: var(--shadow-sm);
+  object-fit: cover;
+}
+
+.profile-header h2 {
+  margin-bottom: 4px;
+  font-weight: 700;
+  font-size: 20px;
+}
+
+/* Profile statistics display */
+.profile-stats {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.stat-item {
+  font-size: 14px;
+}
+
+.stat-value {
+  font-weight: 700;
+  margin-right: 4px;
+}
+
+/* Edit profile button */
+.edit-profile-btn {
+  margin-top: 12px;
+  padding: 6px 12px;
+  background-color: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-full);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.edit-profile-btn:hover {
+  background-color: rgba(29, 161, 242, 0.1);
+}
+
+/* Edit profile form */
+.edit-profile-form {
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: var(--shadow-md);
+}
+
+.edit-profile-form h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+  border-radius: var(--radius-full);
+}
+
+.btn-secondary {
+  background-color: white;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+}
+
+/* Tweet/Post item styling */
+.tweet-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.tweet-item:last-child {
+  border-bottom: none;
+}
+
+.tweet-text {
+  margin-bottom: 8px;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+
+.tweet-date {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.show-more {
+  text-align: center;
+  padding: 12px 0;
+}
+
+/* Feed specific styling */
+.feed-container {
+  position: relative;
+}
+
+.feed-tweet {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 8px;
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.feed-tweet:last-child {
+  border-bottom: none;
+}
+
+.feed-tweet-header {
+  margin-bottom: 10px;
+}
+
+.feed-tweet-user {
+  display: flex;
+  align-items: center;
+}
+
+.feed-tweet-user img {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+.feed-tweet-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.feed-tweet-name {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.feed-tweet-handle {
+  color: var(--text-secondary);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.feed-tweet-handle:hover {
+  text-decoration: underline;
+  color: var(--primary);
+}
+
+.feed-tweet-content {
+  margin-bottom: 10px;
+  word-wrap: break-word;
+  line-height: 1.4;
+}
+
+.feed-tweet-date {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.feed-empty {
+  text-align: center;
+  padding: 32px 20px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.feed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.feed-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Search results styling */
+.user-results-list {
+  margin-top: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.user-list-item {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.user-list-item:last-child {
+  border-bottom: none;
+}
+
+.user-list-item img {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-full);
+  margin-right: 12px;
+  object-fit: cover;
+}
+
+.user-stats {
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+/* Load more button */
+.load-more-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  background-color: var(--background);
+  color: var(--primary);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  text-align: center;
+  transition: all var(--transition);
+}
+
+.load-more-btn:hover {
+  background-color: rgba(29, 161, 242, 0.1);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Utility class for hiding elements */
+.hidden {
+  display: none;
+}
+
+/* Responsive design for mobile devices */
+@media (max-width: 768px) {
+  .profile-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .profile-header img {
+    margin-right: 0;
+    margin-bottom: 16px;
+  }
+
+  .tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tab {
+    padding: 12px 16px;
+  }
+
+  .search-field {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .search-field button {
+    width: 100%;
+  }
+
+  .header {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .header-user {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .nav-buttons {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Additional UI components actually used in the application */
+
+/* Empty state styling */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.empty-icon {
+  font-size: 32px;
+  margin-bottom: 16px;
+  opacity: 0.6;
+  color: var(--text-secondary);
+}
+
+.empty-state p {
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.empty-state small {
+  opacity: 0.8;
+}
+
+/* Compose tweet area */
+.compose-tweet {
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin: 20px 0;
+}
+
+.compose-tweet h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: var(--text-primary);
+}
+
+.compose-tweet textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  resize: vertical;
+  font-size: 14px;
+  margin-bottom: 12px;
+  transition: border var(--transition);
+}
+
+.compose-tweet textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(29, 161, 242, 0.1);
+}
+
+.compose-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Recent posts section */
+.recent-posts {
+  margin-top: 24px;
+}
+
+.recent-posts h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.post-search {
+  margin-bottom: 12px;
+}
+
+.post-search input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  font-size: 14px;
+}
+
+.posts-list {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+/* Tweet actions (like, retweet, reply) */
+.feed-tweet-actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.tweet-action {
+  background: transparent;
+  color: var(--text-secondary);
+  border: none;
+  padding: 6px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--transition);
+}
+
+.tweet-action:hover {
+  background-color: rgba(29, 161, 242, 0.1);
+  color: var(--primary);
+}
+
+.like-btn:hover {
+  color: #e0245e;
+  background-color: rgba(224, 36, 94, 0.1);
+}
+
+.retweet-btn:hover {
+  color: #17bf63;
+  background-color: rgba(23, 191, 99, 0.1);
+}
+
+/* Enhanced text formatting */
+.text-secondary {
+  color: var(--text-secondary);
+  font-weight: normal;
+}
+
+/* Loading spinner animation */
+.fa-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Mobile responsive tweaks */
+@media (max-width: 768px) {
+  .compose-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  #tweetSubmitBtn {
+    width: 100%;
+  }
+
+  .feed-tweet-actions {
+    justify-content: space-around;
+  }
+}
+
+/* Card section headers */
+.card > h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--primary);
+}
+
+.card > h2 i {
+  color: var(--primary);
+}
+
+/* Location information styling */
+.location-info {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 4px 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.location-info::before {
+  content: "📍"; /* Unicode location pin emoji */
+  font-size: 14px;
+}
+
+/* Error message styling */
+.text-error {
+  color: var(--error);
+}
+
+/* Loading indicator styling */
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: var(--text-secondary);
+}

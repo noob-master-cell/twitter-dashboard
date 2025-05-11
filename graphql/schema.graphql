@@ -1,0 +1,233 @@
+type Tweet {
+  created_at: DateTime
+  favorites: Int
+  id: ID
+  id_str: String
+  import_method: String
+  text: String
+  using: [Source] @relationship(type: "USING", direction: OUT)
+  tags: [Hashtag] @relationship(type: "TAGS", direction: OUT)
+  retweets: [Tweet] @relationship(type: "RETWEETS", direction: OUT)
+  reply_to: [Tweet] @relationship(type: "REPLY_TO", direction: OUT)
+  contains: [Link] @relationship(type: "CONTAINS", direction: OUT)
+  posted_by: User @relationship(type: "POSTS", direction: IN)
+  mentions: [User] @relationship(type: "MENTIONS", direction: OUT)
+}
+
+type Me {
+  followers: Int!
+  following: Int!
+  location: String!
+  name: String!
+  profile_image_url: String!
+  screen_name: ID!
+  posts: [Tweet] @relationship(type: "POSTS", direction: OUT)
+  users: [User] @relationship(type: "FOLLOWS", direction: IN)
+  tweets: [Tweet] @relationship(type: "MENTIONS", direction: IN)
+
+  topMentions(first: Int = 5): [UserCount]
+    @cypher(
+      statement: """
+      MATCH (this)-[:POSTS]->(t:Tweet)-[:MENTIONS]->(m:User)
+      WITH m, COUNT(m.screen_name) AS count
+      ORDER BY count DESC
+      LIMIT $first
+      RETURN {
+        user: m,
+        count: count
+      } AS result
+      """
+    )
+
+  topHashtags(first: Int = 5): [HashtagCount]
+    @cypher(
+      statement: """
+      MATCH (this)-[:POSTS]->(t:Tweet)-[:TAGS]->(h:Hashtag)
+      WITH h, COUNT(h) AS count
+      ORDER BY count DESC
+      LIMIT $first
+      RETURN {
+        name: h.name,
+        count: count
+      } AS result
+      """
+    )
+
+  followbackCount: Int
+    @cypher(
+      statement: """
+      MATCH (this)-[:FOLLOWS]->(f:User)
+      WHERE (f)-[:FOLLOWS]->(this)
+      RETURN count(f) AS followbackCount
+      """
+    )
+
+  recommended(first: Int = 10): [UserCount]
+    @cypher(
+      statement: """
+      MATCH (u:User)-[:POSTS]->(t:Tweet)-[:MENTIONS]->(this)
+      WITH DISTINCT u, this, count(t) AS count
+      WHERE (u)-[:FOLLOWS]->(this)
+        AND NOT (this)-[:FOLLOWS]->(u)
+      RETURN {
+        user: u,
+        count: count
+      } AS result
+      ORDER BY result.count DESC
+      LIMIT $first
+      """
+    )
+
+  priorityFeed: [UserTweet]
+    @cypher(
+      statement: """
+      MATCH (t:Tweet) WHERE t.created_at IS NOT NULL
+      WITH datetime() - duration('P3D') AS recentDate
+
+      CALL {
+        WITH recentDate
+        MATCH (this)-[r:SIMILAR_TO]-(u:User)
+        WITH u, recentDate
+        ORDER BY r.score DESC
+        LIMIT 10
+        MATCH (u)-[:POSTS]->(t:Tweet)
+        WHERE t.created_at >= recentDate
+        WITH u, t
+        ORDER BY t.created_at DESC
+        LIMIT 50
+        RETURN {
+          screen_name: u.screen_name,
+          name: u.name,
+          profile_pic: u.profile_image_url,
+          created_at: t.created_at,
+          text: t.text
+        } AS tweet
+
+        UNION
+
+        WITH recentDate
+        MATCH (u:User)-[:POSTS]->(t:Tweet)
+        WHERE t.created_at >= recentDate AND u <> this
+        WITH u, t
+        ORDER BY t.created_at DESC
+        LIMIT 50
+        RETURN {
+          screen_name: u.screen_name,
+          name: u.name,
+          profile_pic: u.profile_image_url,
+          created_at: t.created_at,
+          text: t.text
+        } AS tweet
+      }
+      RETURN tweet AS result
+      """
+    )
+}
+
+type Hashtag {
+  name: String!
+  tweets: [Tweet] @relationship(type: "TAGS", direction: IN)
+  num_tweets: Int @cypher(statement: "RETURN size((this)<-[:TAGS]-(:Tweet))")
+
+  trendingTags(first: Int = 5): [HashtagCount]
+    @cypher(
+      statement: """
+      MATCH (t:Tweet)-[:TAGS]->(h:Hashtag)
+      WITH h, COUNT(h) AS count
+      ORDER BY count DESC
+      LIMIT $first
+      RETURN {
+        name: h.name,
+        count: count
+      } AS result
+      """
+    )
+}
+
+type Link {
+  url: String!
+  tweets: [Tweet] @relationship(type: "CONTAINS", direction: IN)
+}
+
+type Source {
+  name: String!
+  tweets: [Tweet] @relationship(type: "USING", direction: IN)
+}
+
+type User {
+  followers: Int
+  following: Int
+  location: String
+  name: String!
+  profile_image_url: String
+  screen_name: String!
+  statuses: Int
+  url: String
+  posts: [Tweet] @relationship(type: "POSTS", direction: OUT)
+  tweets: [Tweet] @relationship(type: "MENTIONS", direction: IN)
+  follows: [User] @relationship(type: "FOLLOWS", direction: OUT)
+  followedBy: [User] @relationship(type: "FOLLOWS", direction: IN)
+
+  topMentions: UserCount
+    @cypher(
+      statement: """
+      MATCH (this)-[:POSTS]->(t:Tweet)-[:MENTIONS]->(m:User)
+      WITH m, COUNT(m.screen_name) AS count
+      ORDER BY count DESC
+      LIMIT 1
+      RETURN {
+        user: m,
+        count: count
+      } AS topMentions
+      """
+    )
+}
+
+type UserCount {
+  count: Int
+  user: User
+}
+
+type HashtagCount {
+  count: Int
+  name: String
+}
+
+type UserTweet {
+  screen_name: String
+  name: String
+  profile_pic: String
+  created_at: DateTime
+  text: String
+}
+
+type Query {
+  me: Me @cypher(statement: "MATCH (m:Me) RETURN m LIMIT 1")
+
+  userByScreenName(screen_name: String!): User
+    @cypher(statement: "MATCH (u:User {screen_name: $screen_name}) RETURN u")
+
+  tweetById(id: ID!): Tweet
+    @cypher(statement: "MATCH (t:Tweet {id: $id}) RETURN t")
+
+  hashtagByName(name: String!): Hashtag
+    @cypher(statement: "MATCH (h:Hashtag {name: $name}) RETURN h")
+}
+
+type Mutation {
+  createTweet(text: String!, screen_name: String!): Tweet
+    @cypher(
+      statement: """
+      MATCH (u:User {screen_name: $screen_name})
+      CREATE (t:Tweet {
+        id: randomUUID(),
+        id_str: randomUUID(),
+        text: $text,
+        created_at: datetime(),
+        favorites: 0
+      })
+      CREATE (u)-[:POSTS]->(t)
+      RETURN t
+      """
+    )
+}

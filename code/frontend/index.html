@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Twitter Dashboard</title>
+
+    <!-- Font Awesome icons for UI iconography (buttons, status indicators, etc.) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Google Fonts - Roboto for consistent typography across the application -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Main stylesheet containing all application styles -->
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Main application container - centers content and sets max width -->
+    <div class="container">
+      <!-- Application header - contains branding and user navigation -->
+      <div class="header">
+        <!-- Twitter logo and application title -->
+        <i class="fab fa-twitter header-icon"></i>
+        <h1>Twitter Dashboard</h1>
+
+        <!-- Navigation buttons container - shows login/signup when logged out -->
+        <div id="navButtons" class="nav-buttons">
+          <!-- Login button - toggles login form visibility -->
+          <button id="loginBtn" class="nav-btn">
+            <i class="fas fa-sign-in-alt"></i> Login
+          </button>
+          <!-- Signup button - toggles signup form visibility -->
+          <button id="signupBtn" class="nav-btn">
+            <i class="fas fa-user-plus"></i> Sign Up
+          </button>
+        </div>
+      </div>
+
+      <!-- Login Form - hidden by default, shown when login button is clicked -->
+      <div id="loginForm" class="auth-form card hidden">
+        <h3>Login</h3>
+        <div class="search-field">
+          <!-- Input for entering screen name to log in -->
+          <input
+            type="text"
+            id="loginInput"
+            placeholder="Enter your screen name"
+          />
+          <!-- Submit button to attempt login -->
+          <button id="loginSubmitBtn">
+            <i class="fas fa-sign-in-alt"></i> Login
+          </button>
+        </div>
+      </div>
+
+      <!-- Signup Form - hidden by default, shown when signup button is clicked -->
+      <div id="signupForm" class="auth-form card hidden">
+        <h3>Create New User</h3>
+        <form id="newUserForm">
+          <!-- Required field: User's display name -->
+          <div>
+            <label for="newName">Name</label>
+            <input type="text" id="newName" required />
+          </div>
+
+          <!-- Required field: Unique screen name for the user -->
+          <div>
+            <label for="newScreenName">Screen Name</label>
+            <input type="text" id="newScreenName" required />
+          </div>
+
+          <!-- Optional field: User's location -->
+          <div>
+            <label for="newLocation">Location</label>
+            <input type="text" id="newLocation" />
+          </div>
+
+          <!-- Optional field: URL for user's profile image -->
+          <div>
+            <label for="newProfileImage">Profile Image URL</label>
+            <input type="text" id="newProfileImage" />
+          </div>
+
+          <!-- Submit button to create the new user account -->
+          <button type="submit"><i class="fas fa-plus"></i> Create User</button>
+        </form>
+      </div>
+
+      <!-- Main Dashboard - shown only when user is logged in -->
+      <div id="dashboardTabs" class="hidden">
+        <!-- Tab navigation - switches between different views -->
+        <div class="tabs">
+          <!-- Profile tab - shows user's profile and posts -->
+          <div class="tab active" data-tab="profile">
+            <i class="fas fa-user"></i> Profile
+          </div>
+
+          <!-- Feed tab - shows tweets from users the current user follows -->
+          <div class="tab" data-tab="feed">
+            <i class="fas fa-stream"></i> Feed
+          </div>
+
+          <!-- Search tab - find other users by screen name -->
+          <div class="tab" data-tab="search">
+            <i class="fas fa-search"></i> Search Users
+          </div>
+
+          <!-- Tweets tab - search for tweets by keyword -->
+          <div class="tab" data-tab="tweets">
+            <i class="fas fa-hashtag"></i> Find Tweets
+          </div>
+        </div>
+
+        <!-- Profile Tab Content - shows user details, tweet creation, and user's posts -->
+        <div id="profileTab" class="tab-content active">
+          <!-- Container for user profile details - populated dynamically -->
+          <div id="userDetails" class="card"></div>
+        </div>
+
+        <!-- Feed Tab Content - shows timeline of tweets from followed users -->
+        <div id="feedTab" class="tab-content">
+          <div class="card">
+            <!-- Feed header with title and refresh button -->
+            <div class="feed-header">
+              <h2><i class="fas fa-stream"></i> Following Feed</h2>
+              <!-- Button to manually refresh the feed -->
+              <button id="refreshFeedBtn">
+                <i class="fas fa-sync-alt"></i> Refresh
+              </button>
+            </div>
+            <!-- Container for tweets - populated dynamically -->
+            <div id="tweetFeed" class="feed-container"></div>
+          </div>
+        </div>
+
+        <!-- Search Tab Content - search for users by screen name -->
+        <div id="searchTab" class="tab-content">
+          <div class="card">
+            <h2><i class="fas fa-search"></i> Find Users</h2>
+
+            <!-- Search input and button for user search -->
+            <div class="search-field">
+              <input
+                type="text"
+                id="tabSearchInput"
+                placeholder="Search for users by screen name..."
+              />
+              <button id="tabSearchBtn">
+                <i class="fas fa-search"></i> Search
+              </button>
+            </div>
+
+            <!-- Container for search results - populated dynamically -->
+            <div id="tabSearchResults" class="mt-2">
+              <!-- Search results will appear here via JavaScript -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Tweets Tab Content - search for tweets by keyword -->
+        <div id="tweetsTab" class="tab-content">
+          <div class="card">
+            <h2><i class="fas fa-hashtag"></i> Find Tweets</h2>
+
+            <!-- Search input and button for tweet search -->
+            <div class="search-field">
+              <input
+                type="text"
+                id="postSearchInput"
+                placeholder="Search for tweets..."
+              />
+              <button id="postSearchBtn">
+                <i class="fas fa-search"></i> Search
+              </button>
+            </div>
+
+            <!-- Container for tweet search results - initially hidden -->
+            <div id="postSearchResults" class="mt-2 hidden"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 
+      JavaScript module entry point - app.js handles initialization
+      Using type="module" enables ES6 imports/exports
+    -->
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
