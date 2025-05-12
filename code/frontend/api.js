@@ -1,6 +1,3 @@
-// API layer for handling GraphQL operations with a Twitter-like backend
-// All GraphQL queries and mutations for user profiles, tweets, and search functionality
-
 const GRAPHQL_ENDPOINT = "http://localhost:4000";
 
 /**
