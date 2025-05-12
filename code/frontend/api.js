@@ -4,39 +4,6 @@
 const GRAPHQL_ENDPOINT = "http://localhost:4000";
 
 /**
- * Updates a user's profile information
- * @param {string} screenName - The screen name of the user to update
- * @param {Object} updates - Object containing fields to update (name, location, profile_image_url)
- * @returns {Promise<Object>} - Updated user object
- */
-async function updateUserProfile(screenName, updates) {
-  // Create a clean object with only the fields that have been provided
-  const cleanUpdates = {};
-  if (updates.name !== undefined) cleanUpdates.name = updates.name;
-  if (updates.location !== undefined) cleanUpdates.location = updates.location;
-  if (updates.profile_image_url !== undefined)
-    cleanUpdates.profile_image_url = updates.profile_image_url;
-
-  // Build the GraphQL update query dynamically based on provided fields
-  const updateFields = Object.entries(cleanUpdates)
-    .map(([key, value]) => `${key}: "${value}"`)
-    .join(", ");
-
-  // Execute the mutation to update user profile
-  const mutation = `
-    mutation {
-      updateUsers(where: { screen_name: "${screenName}" }, update: { ${updateFields} }) {
-        users { name screen_name location profile_image_url followers following }
-      }
-    }
-  `;
-
-  await fetchGraphQL(mutation);
-  // Return the updated user data
-  return await getUserByScreenName(screenName);
-}
-
-/**
  * Generic GraphQL query executor
  * @param {string} query - The GraphQL query or mutation string
  * @param {Object} variables - Optional variables for the GraphQL operation
@@ -88,6 +55,39 @@ async function getUserByScreenName(screen_name) {
   }
 
   return user;
+}
+
+/**
+ * Updates a user's profile information
+ * @param {string} screenName - The screen name of the user to update
+ * @param {Object} updates - Object containing fields to update (name, location, profile_image_url)
+ * @returns {Promise<Object>} - Updated user object
+ */
+async function updateUserProfile(screenName, updates) {
+  // Create a clean object with only the fields that have been provided
+  const cleanUpdates = {};
+  if (updates.name !== undefined) cleanUpdates.name = updates.name;
+  if (updates.location !== undefined) cleanUpdates.location = updates.location;
+  if (updates.profile_image_url !== undefined)
+    cleanUpdates.profile_image_url = updates.profile_image_url;
+
+  // Build the GraphQL update query dynamically based on provided fields
+  const updateFields = Object.entries(cleanUpdates)
+    .map(([key, value]) => `${key}: "${value}"`)
+    .join(", ");
+
+  // Execute the mutation to update user profile
+  const mutation = `
+    mutation {
+      updateUsers(where: { screen_name: "${screenName}" }, update: { ${updateFields} }) {
+        users { name screen_name location profile_image_url followers following }
+      }
+    }
+  `;
+
+  await fetchGraphQL(mutation);
+  // Return the updated user data
+  return await getUserByScreenName(screenName);
 }
 
 /**
